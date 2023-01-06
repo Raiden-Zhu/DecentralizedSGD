@@ -4,7 +4,7 @@ from torchvision import models
 
 
 class ResNet18(nn.Module):
-    def __init__(self, num_classes, bias=True, pretrained=True, **kwargs):
+    def __init__(self, num_classes, bias=True, pretrained=False, **kwargs):
         super().__init__()
         self.seq = models.resnet18(pretrained=pretrained)
         self.seq.fc = nn.Linear(512, num_classes, bias)

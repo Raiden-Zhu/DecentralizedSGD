@@ -17,7 +17,7 @@ from utils.utils import *
 dir_path = os.path.dirname(__file__)
 
 nfs_dataset_path1 = '/mnt/nfs/ckx/datasets/'
-nfs_dataset_path2 = '/nfs_dataset_path2/datasets/'
+nfs_dataset_path2 = '/nfs4-p1/ckx/datasets/'
 
 def main(args):
     set_seed(args)
@@ -91,7 +91,7 @@ def main(args):
                     param.data += worker.model.state_dict()[name].data
                 param.data /= args.size
             
-            if iteration % 5 == 0:    
+            if iteration % 50 == 0:    
                 start_time = datetime.datetime.now() 
                 eval_iteration = iteration
                 train_acc, train_loss, valid_acc, valid_loss = eval_vision(center_model, probe_train_loader, probe_valid_loader,
@@ -126,7 +126,7 @@ if __name__=='__main__':
     parser.add_argument("--dataset_path", type=str, default='datasets')
     parser.add_argument("--dataset_name", type=str, default='CIFAR10',
                                             choices=['CIFAR10','TinyImageNet'])
-    parser.add_argument("--image_size", type=int, default=115, help='input image size')
+    parser.add_argument("--image_size", type=int, default=32, help='input image size')
     parser.add_argument("--batch_size", type=int, default=32)
     parser.add_argument('--n_swap', type=int, default=None)
 
