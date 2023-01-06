@@ -6,6 +6,9 @@ __pycache__/
 
 .vscode
 
+logs_runs
+logs_perf
+
 datasets/cifar-10*
 datasets/tiny-imagenet*
 fig*
