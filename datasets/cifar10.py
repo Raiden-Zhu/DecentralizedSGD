@@ -12,7 +12,7 @@ def load_cifar10(root, transforms=None, image_size=32,
         transforms = tfs.Compose([
             tfs.Resize(image_size),
             tfs.ToTensor(),
-            tfs.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+            tfs.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010])
         ])
     if train_batch_size is None:
         train_batch_size = 1
