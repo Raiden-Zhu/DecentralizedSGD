@@ -61,6 +61,7 @@ def add_identity(args, dir_path):
                      f"{args.shuffle}-"+
                      f"{args.size}-"+
                      f"{args.model}-"+
+                     f"{args.pretrained}-"+
                      f"{args.lr}-"+
                      f"{args.wd}-"+
                      f"{args.gamma}-"+  

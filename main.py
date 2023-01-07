@@ -31,7 +31,7 @@ def main(args):
     log_id = datetime.datetime.now().strftime('%b%d_%H:%M:%S') + '_' + socket.gethostname() + '_' + args.identity
     writer = SummaryWriter(log_dir=os.path.join(args.runs_data_dir, log_id))
 
-    probe_train_loader, probe_valid_loader, input_size, classes = load_dataset(root=args.dataset_path, name=args.dataset_name, image_size=args.image_size,
+    probe_train_loader, probe_valid_loader, _, classes = load_dataset(root=args.dataset_path, name=args.dataset_name, image_size=args.image_size,
                                                                     train_batch_size=256, valid_batch_size=64)
     worker_list = []
     split = [1.0 / args.size for _ in range(args.size)]
@@ -39,7 +39,7 @@ def main(args):
         train_loader, _, _, classes = load_dataset(root=args.dataset_path, name=args.dataset_name, image_size=args.image_size, 
                                                     train_batch_size=args.batch_size, 
                                                     distribute=True, rank=rank, split=split, seed=args.seed)
-        model = load_model(args.model, input_size, classes).to(args.device)
+        model = load_model(args.model, classes, pretrained=args.pretrained).to(args.device)
         optimizer = SGD(model.parameters(), lr=args.lr, weight_decay=args.wd, momentum=args.momentum)
         scheduler = MultiStepLR(optimizer, milestones=args.milestones, gamma=args.gamma)
 
@@ -126,8 +126,8 @@ if __name__=='__main__':
     parser.add_argument("--dataset_path", type=str, default='datasets')
     parser.add_argument("--dataset_name", type=str, default='CIFAR10',
                                             choices=['CIFAR10','TinyImageNet'])
-    parser.add_argument("--image_size", type=int, default=32, help='input image size')
-    parser.add_argument("--batch_size", type=int, default=32)
+    parser.add_argument("--image_size", type=int, default=64, help='input image size')
+    parser.add_argument("--batch_size", type=int, default=512)
     parser.add_argument('--n_swap', type=int, default=None)
 
     # mode parameter
@@ -138,6 +138,7 @@ if __name__=='__main__':
     parser.add_argument('--backend', type=str, default="gloo")
     # deep model parameter
     parser.add_argument('--model', type=str, default='AlexNet', choices=['ResNet18', 'AlexNet', 'DenseNet'])
+    parser.add_argument("--pretrained", type=int, default=0)
 
     # optimization parameter
     parser.add_argument('--lr', type=float, default=0.01, help='learning rate')
