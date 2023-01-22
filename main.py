@@ -13,7 +13,7 @@ from datasets import load_dataset
 from networks import load_model
 from workers.worker_vision import *
 from utils.utils import *
-
+os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 dir_path = os.path.dirname(__file__)
 
 nfs_dataset_path1 = '/mnt/nfs/ckx/datasets/'
@@ -75,6 +75,7 @@ def main(args):
                 model_dict_list = []
                 for worker in worker_list:
                     model_dict_list.append(worker.model.state_dict())  
+                for worker in worker_list:
                     worker.step()
                     for name, param in worker.model.named_parameters():
                         param.data = torch.zeros_like(param.data)
@@ -84,27 +85,24 @@ def main(args):
                     # worker.step() # 效果会变差
                     worker.update_grad()
 
-                # if iteration in [1000,2000,3000]:
-                #     models_linear_tensor = torch.zeros(16,10,512)
-                #     worker_num=0
-
-                # for worker in worker_list:
-                #     if iteration in [1000,2000,3000]:
-                #         models_linear_tensor[worker_num,:,:]=worker.model.state_dict()['seq.fc.weight']
-                #         worker_num+=1
-
-                # if iteration in [1000,2000,3000]:
-                #     models_linear_tensor_difference = models_linear_tensor - models_linear_tensor.mean(0).unsqueeze(0).repeat(16,1,1)
-                #     models_releate_matrix = models_linear_tensor_difference.transpose(1,2).bmm(models_linear_tensor_difference)
-                # if iteration == 1000:
-                #     torch.save(models_linear_tensor,'models_linear_tensor_1000.pt')
-                #     torch.save(models_releate_matrix,'models_releate_matrix_1000.pt')
-                # elif iteration == 2000:
-                #     torch.save(models_linear_tensor,'models_linear_tensor_2000.pt')
-                #     torch.save(models_releate_matrix,'models_releate_matrix_2000.pt')   
-                # elif iteration == 3000:                 
-                #     torch.save(models_linear_tensor,'models_linear_tensor_3000.pt')
-                #     torch.save(models_releate_matrix,'models_releate_matrix_3000.pt')                       
+                if iteration in [1000,2000,3000]:
+                    models_linear_tensor = torch.zeros(16,10,512)
+                    worker_num=0
+                    for worker in worker_list:
+                        models_linear_tensor[worker_num,:,:]=worker.model.state_dict()['seq.fc.weight']
+                        worker_num+=1
+                    models_linear_tensor_difference = models_linear_tensor - models_linear_tensor.mean(0).unsqueeze(0).repeat(16,1,1)
+                    models_releate_matrix = models_linear_tensor_difference.transpose(1,2).bmm(models_linear_tensor_difference)
+                    
+                if iteration == 1000:
+                    torch.save(models_linear_tensor,'models_linear_tensor_1000.pt')
+                    torch.save(models_releate_matrix,'models_releate_matrix_1000.pt')
+                elif iteration == 2000:
+                    torch.save(models_linear_tensor,'models_linear_tensor_2000.pt')
+                    torch.save(models_releate_matrix,'models_releate_matrix_2000.pt')   
+                elif iteration == 3000:                 
+                    torch.save(models_linear_tensor,'models_linear_tensor_3000.pt')
+                    torch.save(models_releate_matrix,'models_releate_matrix_3000.pt')                       
 
             center_model = copy.deepcopy(worker_list[0].model)
             for name, param in center_model.named_parameters():
@@ -145,9 +143,9 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser()
     ## dataset
     parser.add_argument("--dataset_path", type=str, default='datasets')
-    parser.add_argument("--dataset_name", type=str, default='CIFAR10',
-                                            choices=['CIFAR10','TinyImageNet'])
-    parser.add_argument("--image_size", type=int, default=64, help='input image size')
+    parser.add_argument("--dataset_name", type=str, default='CIFAR100',
+                                            choices=['CIFAR10','CIFAR100','TinyImageNet'])
+    parser.add_argument("--image_size", type=int, default=56, help='input image size')
     parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument('--n_swap', type=int, default=None)
 
@@ -158,8 +156,9 @@ if __name__=='__main__':
     parser.add_argument('--port', type=int, default=29500)
     parser.add_argument('--backend', type=str, default="gloo")
     # deep model parameter
-    parser.add_argument('--model', type=str, default='ResNet18', choices=['ResNet18', 'AlexNet', 'DenseNet'])
-    parser.add_argument("--pretrained", type=int, default=0)
+    parser.add_argument('--model', type=str, default='ResNet18_M', choices=['ResNet18', 'AlexNet', 'DenseNet121',
+                                                                             'ResNet18_M', 'ResNet34_M', 'DenseNet121'])
+    parser.add_argument("--pretrained", type=int, default=1)
 
     # optimization parameter
     parser.add_argument('--lr', type=float, default=0.1, help='learning rate')
@@ -170,7 +169,7 @@ if __name__=='__main__':
     parser.add_argument('--early_stop', type=int, default=6000, help='w.r.t., iterations')
     parser.add_argument('--milestones', type=int, nargs='+', default=[2400, 4800])
     parser.add_argument('--seed', type=int, default=777)
-    parser.add_argument("--device", type=int, default=1)
+    parser.add_argument("--device", type=int, default=0)
     args = parser.parse_args()
 
     args = add_identity(args, dir_path)

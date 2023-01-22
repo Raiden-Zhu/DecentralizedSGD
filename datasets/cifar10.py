@@ -10,7 +10,7 @@ def load_cifar10(root, transforms=None, image_size=32,
                  distribute=False, split=1.0, rank=0, seed=666):
     if transforms is None:
         transforms = tfs.Compose([
-            tfs.Resize(image_size),
+            tfs.Resize((image_size,image_size)),
             tfs.ToTensor(),
             tfs.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010])
         ])

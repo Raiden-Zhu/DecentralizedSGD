@@ -6,7 +6,11 @@ from torchvision import models
 class ResNet18(nn.Module):
     def __init__(self, num_classes, bias=True, pretrained=False, **kwargs):
         super().__init__()
-        self.seq = models.resnet18(pretrained=pretrained)
+        model = models.resnet18()
+        if pretrained:
+            state_dict = torch.load('pretrain/ImageNets64-1024-ResNet18-0.1-0.0001-0.1-0.0-30000-30000-777.pth', map_location='cuda:0')
+            model.load_state_dict(state_dict)
+        self.seq = model
         self.seq.fc = nn.Linear(512, num_classes, bias)
 
     def forward(self, x):
