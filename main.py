@@ -85,24 +85,24 @@ def main(args):
                     # worker.step() # 效果会变差
                     worker.update_grad()
 
-                if iteration in [1000,2000,3000]:
-                    models_linear_tensor = torch.zeros(16,10,512)
-                    worker_num=0
-                    for worker in worker_list:
-                        models_linear_tensor[worker_num,:,:]=worker.model.state_dict()['seq.fc.weight']
-                        worker_num+=1
-                    models_linear_tensor_difference = models_linear_tensor - models_linear_tensor.mean(0).unsqueeze(0).repeat(16,1,1)
-                    models_releate_matrix = models_linear_tensor_difference.transpose(1,2).bmm(models_linear_tensor_difference)
+                # if iteration in [1000,2000,3000]:
+                #     models_linear_tensor = torch.zeros(16,10,512)
+                #     worker_num=0
+                #     for worker in worker_list:
+                #         models_linear_tensor[worker_num,:,:]=worker.model.state_dict()['seq.fc.weight']
+                #         worker_num+=1
+                #     models_linear_tensor_difference = models_linear_tensor - models_linear_tensor.mean(0).unsqueeze(0).repeat(16,1,1)
+                #     models_releate_matrix = models_linear_tensor_difference.transpose(1,2).bmm(models_linear_tensor_difference)
                     
-                if iteration == 1000:
-                    torch.save(models_linear_tensor,'models_linear_tensor_1000.pt')
-                    torch.save(models_releate_matrix,'models_releate_matrix_1000.pt')
-                elif iteration == 2000:
-                    torch.save(models_linear_tensor,'models_linear_tensor_2000.pt')
-                    torch.save(models_releate_matrix,'models_releate_matrix_2000.pt')   
-                elif iteration == 3000:                 
-                    torch.save(models_linear_tensor,'models_linear_tensor_3000.pt')
-                    torch.save(models_releate_matrix,'models_releate_matrix_3000.pt')                       
+                # if iteration == 1000:
+                #     torch.save(models_linear_tensor,'models_linear_tensor_1000.pt')
+                #     torch.save(models_releate_matrix,'models_releate_matrix_1000.pt')
+                # elif iteration == 2000:
+                #     torch.save(models_linear_tensor,'models_linear_tensor_2000.pt')
+                #     torch.save(models_releate_matrix,'models_releate_matrix_2000.pt')   
+                # elif iteration == 3000:                 
+                #     torch.save(models_linear_tensor,'models_linear_tensor_3000.pt')
+                #     torch.save(models_releate_matrix,'models_releate_matrix_3000.pt')                       
 
             center_model = copy.deepcopy(worker_list[0].model)
             for name, param in center_model.named_parameters():
