@@ -148,7 +148,7 @@ if __name__=='__main__':
     parser.add_argument("--dataset_name", type=str, default='CIFAR100',
                                             choices=['CIFAR10','CIFAR100','TinyImageNet'])
     parser.add_argument("--image_size", type=int, default=56, help='input image size')
-    parser.add_argument("--batch_size", type=int, default=64)
+    parser.add_argument("--batch_size", type=int, default=512)
     parser.add_argument('--n_swap', type=int, default=None)
 
     # mode parameter
@@ -158,8 +158,8 @@ if __name__=='__main__':
     parser.add_argument('--port', type=int, default=29500)
     parser.add_argument('--backend', type=str, default="gloo")
     # deep model parameter
-    parser.add_argument('--model', type=str, default='ResNet18_M', choices=['ResNet18', 'AlexNet', 'DenseNet121',
-                                                                             'ResNet18_M', 'ResNet34_M', 'DenseNet121'])
+    parser.add_argument('--model', type=str, default='DenseNet121_M', choices=['ResNet18', 'AlexNet', 'DenseNet121',
+                                                                             'ResNet18_M', 'ResNet34_M', 'DenseNet121_M'])
     parser.add_argument("--pretrained", type=int, default=1)
 
     # optimization parameter
