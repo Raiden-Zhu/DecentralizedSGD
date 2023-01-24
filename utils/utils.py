@@ -65,7 +65,8 @@ def add_identity(args, dir_path):
                      f"{args.lr}-"+
                      f"{args.wd}-"+
                      f"{args.gamma}-"+  
-                     f"{args.momentum}-"+  
+                     f"{args.momentum}-"+ 
+                     f"{args.warmup_step}-"+ 
                      f"{args.epoch}-"+      
                      f"{args.early_stop}-"+ 
                      f"{args.seed}"

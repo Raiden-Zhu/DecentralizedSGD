@@ -12,6 +12,7 @@ from torch.optim.lr_scheduler import MultiStepLR
 from datasets import load_dataset
 from networks import load_model
 from workers.worker_vision import *
+from utils.scheduler import Warmup_MultiStepLR
 from utils.utils import *
 os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 dir_path = os.path.dirname(__file__)
@@ -41,7 +42,8 @@ def main(args):
                                                     distribute=True, rank=rank, split=split, seed=args.seed)
         model = load_model(args.model, classes, pretrained=args.pretrained).to(args.device)
         optimizer = SGD(model.parameters(), lr=args.lr, weight_decay=args.wd, momentum=args.momentum)
-        scheduler = MultiStepLR(optimizer, milestones=args.milestones, gamma=args.gamma)
+        # scheduler = MultiStepLR(optimizer, milestones=args.milestones, gamma=args.gamma)
+        scheduler = Warmup_MultiStepLR(optimizer, warmup_step=args.warmup_step, milestones=args.milestones, gamma=args.gamma)
 
         worker = Worker_Vision(model, rank, optimizer, scheduler, train_loader, args.device)
         worker_list.append(worker)
@@ -165,6 +167,7 @@ if __name__=='__main__':
     parser.add_argument('--wd', type=float, default=0.0,  help='weight decay')
     parser.add_argument('--gamma', type=float, default=0.1)
     parser.add_argument('--momentum', type=float, default=0.0)
+    parser.add_argument('--warmup_step', type=int, default=15)
     parser.add_argument('--epoch', type=int, default=6000)
     parser.add_argument('--early_stop', type=int, default=6000, help='w.r.t., iterations')
     parser.add_argument('--milestones', type=int, nargs='+', default=[2400, 4800])
