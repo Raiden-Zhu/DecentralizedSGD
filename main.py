@@ -152,7 +152,7 @@ if __name__=='__main__':
     parser.add_argument('--n_swap', type=int, default=None)
 
     # mode parameter
-    parser.add_argument('--mode', type=str, default='ring', choices=['csgd', 'ring'])
+    parser.add_argument('--mode', type=str, default='ring', choices=['csgd', 'ring', 'meshrgrid', 'exponential'])
     parser.add_argument('--shuffle', type=str, default="fixed", choices=['fixed', 'random'])
     parser.add_argument('--size', type=int, default=16)
     parser.add_argument('--port', type=int, default=29500)
