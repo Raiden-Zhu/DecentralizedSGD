@@ -17,7 +17,7 @@ from utils.utils import *
 os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 dir_path = os.path.dirname(__file__)
 
-nfs_dataset_path1 = '/mnt/nfs/ckx/datasets/'
+nfs_dataset_path1 = '/mnt/nfs4-p1/ckx/datasets/'
 nfs_dataset_path2 = '/nfs4-p1/ckx/datasets/'
 
 def main(args):
@@ -172,7 +172,7 @@ if __name__=='__main__':
     parser.add_argument('--early_stop', type=int, default=6000, help='w.r.t., iterations')
     parser.add_argument('--milestones', type=int, nargs='+', default=[2400, 4800])
     parser.add_argument('--seed', type=int, default=777)
-    parser.add_argument("--device", type=int, default=0)
+    parser.add_argument("--device", type=int, default=1)
     args = parser.parse_args()
 
     args = add_identity(args, dir_path)
